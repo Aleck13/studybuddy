@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<style>
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f2f4f7;
+        text-align: center;
+        margin: 0;
+        padding: 40px 20px;
+    }
+
+    h1 {
+        font-size: 42px;
+        margin-bottom: 10px;
+    }
+
+    p {
+        font-size: 18px;
+        color: #555;
+    }
+
+    .app {
+        max-width: 650px;
+        margin: 30px auto;
+        background: white;
+        padding: 30px;
+        border-radius: 20px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+
+    input {
+        padding: 12px;
+        margin: 5px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 15px;
+    }
+
+    button {
+        padding: 12px 18px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+    ul {
+        padding: 0;
+    }
+
+    li {
+        list-style: none;
+        background: #f7f7f7;
+        margin: 10px 0;
+        padding: 15px;
+        border-radius: 10px;
+        cursor: pointer;
+        text-align: left;
+    }
+
+    li button {
+        float: right;
+    }
+</style><head>
+    <title>StudyBuddy</title>
+</head>
+
+<body>
+<div class="app">
+    <h1>StudyBuddy 📚</h1>
+    <p>Organizza i tuoi compiti!</p>
+
+    <input id="compito" type="text" placeholder="Scrivi un compito">
+    <input id="materia" type="text" placeholder="Materia">
+    <input id="scadenza" type="date">
+
+    <button onclick="aggiungiCompito()">Aggiungi</button>
+
+    <ul id="lista"></ul>
+     </div>
+    <script>
+    let compiti = JSON.parse(localStorage.getItem("compiti")) || [];
+
+    function mostraCompiti() {
+        let lista = document.getElementById("lista");
+        lista.innerHTML = "";
+
+        compiti.forEach(function(compito, indice) {
+            let nuovoCompito = document.createElement("li");
+
+            nuovoCompito.textContent =
+                (compito.fatto ? "✅ " : "☐ ") +
+                compito.testo +
+                " | 📚 " + compito.materia +
+                " | 📅 " + compito.scadenza;
+
+            nuovoCompito.onclick = function() {
+    compiti[indice].fatto = !compiti[indice].fatto;
+
+    localStorage.setItem("compiti", JSON.stringify(compiti));
+
+    mostraCompiti();
+};
+
+let elimina = document.createElement("button");
+elimina.textContent = " ❌";
+
+elimina.onclick = function(event) {
+    event.stopPropagation();
+
+    compiti.splice(indice, 1);
+
+    localStorage.setItem("compiti", JSON.stringify(compiti));
+
+    mostraCompiti();
+};
+
+nuovoCompito.appendChild(elimina);
+
+            lista.appendChild(nuovoCompito);
+        });
+    }
+
+    function aggiungiCompito() {
+        let testo = document.getElementById("compito").value;
+        let materia = document.getElementById("materia").value;
+        let scadenza = document.getElementById("scadenza").value;
+
+        if (testo === "") {
+            return;
+        }
+
+        compiti.push({
+            testo: testo,
+            materia: materia,
+            scadenza: scadenza,
+            fatto: false
+        });
+
+        localStorage.setItem("compiti", JSON.stringify(compiti));
+
+        document.getElementById("compito").value = "";
+        document.getElementById("materia").value = "";
+        document.getElementById("scadenza").value = "";
+
+        mostraCompiti();
+    }
+
+    mostraCompiti();
+</script>
+</body>
+</html>
